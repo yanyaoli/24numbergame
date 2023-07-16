@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>24 Number Game</title>
+  <link rel="shortcut" href="24numbergame.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="24numbergame.ico" type="image/x-icon">
+  <style>
+    body {
+      background-color: #F7F7F7;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 80px;
+      background-color: white;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 20px 0 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .language-button {
+      font-size: 12px;
+      margin-bottom: 10px;
+      float: right;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .input-label {
+      font-size: 12px;
+      margin-top: 20px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 5px;
+      font-size: 12px;
+    }
+
+    .submit-button,
+    .clear-button,
+    .copy-button {
+      width: 100px;
+      padding: 6px;
+      margin-top: 10px;
+      font-size: 12px;
+      background-color: #0A1931;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .submit-button:hover,
+    .clear-button:hover,
+    .copy-button:hover {
+      background-color: black;
+    }
+
+    .result-text {
+      width: 100%;
+      height: 200px;
+      margin-top: 10px;
+      padding: 5px;
+      font-size: 12px;
+      background-color: white;
+      color: #333333;
+      overflow-y: auto;
+      resize: vertical;
+    }
+
+    .copy-label {
+      font-size: 10px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="title" onclick="openLink()">24 Number Game</div>
+    <div class="language-button" onclick="toggleLanguage()" id="languageButton"></div>
+    <div class="input-label" id="label1">Number 1:</div>
+    <input id="input1" class="input-field" type="number" />
+    <div class="input-label" id="label2">Number 2:</div>
+    <input id="input2" class="input-field" type="number" />
+    <div class="input-label" id="label3">Number 3:</div>
+    <input id="input3" class="input-field" type="number" />
+    <div class="input-label" id="label4">Number 4:</div>
+    <input id="input4" class="input-field" type="number" />
+    <button class="submit-button" onclick="check24()">Calculate</button>
+    <button class="clear-button" onclick="clearInput()">Clear Input</button>
+    <button class="copy-button" onclick="copyResult()">Copy Result</button>
+    <div class="copy-label" id="copyLabel"></div>
+    <div class="result-text" id="resultText"></div>
+  </div>
+
+  <script>
+    var currentLanguage = "English";
+
+    var languages = {
+      "Chinese": {
+        "title": "24点数字游戏",
+        "languageButton": "English",
+        "inputLabels": ["第1个数字:", "第2个数字:", "第3个数字:", "第4个数字:"],
+        "calculateButton": "计算",
+        "clearButton": "清空输入",
+        "copyButton": "复制结果",
+        "copySuccess": "结果已复制到剪贴板",
+        "noResult": "无可组合的表达式！",
+        "resultText": "四个数字：{0}、{1}、{2}、{3}<br>表达式数量：{4}<br>表达式组合：<br>"
+      },
+      "English": {
+        "title": "24 Number Game",
+        "languageButton": "中文",
+        "inputLabels": ["Number 1:", "Number 2:", "Number 3:", "Number 4:"],
+        "calculateButton": "Calculate",
+        "clearButton": "Clear Input",
+        "copyButton": "Copy Result",
+        "copySuccess": "Result copied to clipboard",
+        "noResult": "No composable expressions!",
+        "resultText": "Numbers: {0}, {1}, {2}, {3}<br>Expression Count: {4}<br>Expressions:<br>"
+      }
+    };
+
+    function check24() {
+      var input1 = parseInt(document.getElementById("input1").value);
+      var input2 = parseInt(document.getElementById("input2").value);
+      var input3 = parseInt(document.getElementById("input3").value);
+      var input4 = parseInt(document.getElementById("input4").value);
+
+      var my_list = [input1, input2, input3, input4];
+      var result = [];
+
+      for (var i = 0; i < my_list.length; i++) {
+        for (var j = 0; j < my_list.length; j++) {
+          for (var k = 0; k < my_list.length; k++) {
+            for (var l = 0; l < my_list.length; l++) {
+              if (i !== j && i !== k && i !== l && j !== k && j !== l && k !== l) {
+                result.push([my_list[i], my_list[j], my_list[k], my_list[l]]);
+              }
+            }
+          }
+        }
+      }
+
+      var symbols = ["+", "-", "*", "/"];
+
+      var list2 = [];
+      var flag = false;
+
+      for (var m = 0; m < result.length; m++) {
+        var one = result[m][0];
+        var two = result[m][1];
+        var three = result[m][2];
+        var four = result[m][3];
+
+        for (var n = 0; n < symbols.length; n++) {
+          for (var o = 0; o < symbols.length; o++) {
+            for (var p = 0; p < symbols.length; p++) {
+              var s1 = symbols[n];
+              var s2 = symbols[o];
+              var s3 = symbols[p];
+              var express;
+
+              if (s1 + s2 + s3 === "+++" || s1 + s2 + s3 === "***") {
+                express = ["{0}{1}{2}{3}{4}{5}{6}".replace("{0}", one).replace("{1}", s1).replace("{2}", two).replace("{3}", s2).replace("{4}", three).replace("{5}", s3).replace("{6}", four)];
+              } else {
+                express = [
+                  "(({0}{1}{2}){3}{4}){5}{6}".replace("{0}", one).replace("{1}", s1).replace("{2}", two).replace("{3}", s2).replace("{4}", three).replace("{5}", s3).replace("{6}", four),
+                  "({0}{1}{2}){3}({4}{5}{6})".replace("{0}", one).replace("{1}", s1).replace("{2}", two).replace("{3}", s2).replace("{4}", three).replace("{5}", s3).replace("{6}", four),
+                  "(({0}{1}({2}{3}{4})){5}{6})".replace("{0}", one).replace("{1}", s1).replace("{2}", two).replace("{3}", s2).replace("{4}", three).replace("{5}", s3).replace("{6}", four),
+                  "{0}{1}(({2}{3}{4}){5}{6})".replace("{0}", one).replace("{1}", s1).replace("{2}", two).replace("{3}", s2).replace("{4}", three).replace("{5}", s3).replace("{6}", four),
+                  "{0}{1}({2}{3}({4}{5}{6}))".replace("{0}", one).replace("{1}", s1).replace("{2}", two).replace("{3}", s2).replace("{4}", three).replace("{5}", s3).replace("{6}", four)
+                ];
+              }
+
+              for (var q = 0; q < express.length; q++) {
+                try {
+                  if (Math.round(eval(express[q]), 6) === 24) {
+                    list2.push(express[q]);
+                    flag = true;
+                  }
+                } catch (e) {
+                  // Do nothing
+                }
+              }
+            }
+          }
+        }
+      }
+
+      var list3 = Array.from(new Set(list2));
+
+      var resultText = document.getElementById("resultText");
+      resultText.innerHTML = "";
+
+      if (flag) {
+        resultText.innerHTML += languages[currentLanguage]["resultText"].replace("{0}", input1).replace("{1}", input2).replace("{2}", input3).replace("{3}", input4).replace("{4}", list3.length);
+        for (var r = 0; r < list3.length; r++) {
+          resultText.innerHTML += "(" + (r + 1) + ") " + list3[r] + "<br>";
+        }
+      } else {
+        resultText.innerHTML += languages[currentLanguage]["noResult"];
+      }
+    }
+
+    function clearInput() {
+      document.getElementById("input1").value = "";
+      document.getElementById("input2").value = "";
+      document.getElementById("input3").value = "";
+      document.getElementById("input4").value = "";
+    }
+
+    function copyResult() {
+      var resultText = document.getElementById("resultText");
+      var copyLabel = document.getElementById("copyLabel");
+      var range = document.createRange();
+      range.selectNodeContents(resultText);
+      var selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      document.execCommand("copy");
+      copyLabel.innerHTML = languages[currentLanguage]["copySuccess"];
+      setTimeout(function () {
+        copyLabel.innerHTML = "";
+      }, 3000);
+    }
+
+    function toggleLanguage() {
+      if (currentLanguage === "Chinese") {
+        currentLanguage = "English";
+      } else {
+        currentLanguage = "Chinese";
+      }
+      updateLanguage();
+    }
+
+    function openLink() {
+      window.open("https://www.github.com/viiayil");
+    }
+
+    function updateLanguage() {
+      var languageButton = document.getElementById("languageButton");
+      var label1 = document.getElementById("label1");
+      var label2 = document.getElementById("label2");
+      var label3 = document.getElementById("label3");
+      var label4 = document.getElementById("label4");
+      var submitButton = document.getElementsByClassName("submit-button")[0];
+      var clearButton = document.getElementsByClassName("clear-button")[0];
+      var copyButton = document.getElementsByClassName("copy-button")[0];
+      var copyLabel = document.getElementById("copyLabel");
+      var resultText = document.getElementById("resultText");
+
+      languageButton.innerHTML = languages[currentLanguage]["languageButton"];
+      label1.innerHTML = languages[currentLanguage]["inputLabels"][0];
+      label2.innerHTML = languages[currentLanguage]["inputLabels"][1];
+      label3.innerHTML = languages[currentLanguage]["inputLabels"][2];
+      label4.innerHTML = languages[currentLanguage]["inputLabels"][3];
+      submitButton.innerHTML = languages[currentLanguage]["calculateButton"];
+      clearButton.innerHTML = languages[currentLanguage]["clearButton"];
+      copyButton.innerHTML = languages[currentLanguage]["copyButton"];
+      copyLabel.innerHTML = "";
+      resultText.innerHTML = "";
+      titleLabel.innerHTML = languages[currentLanguage]["title"];
+      document.title = languages[currentLanguage]["title"];
+    }
+
+    document.addEventListener("keydown", function (event) {
+      if (event.keyCode === 13) {
+        check24();
+      }
+    });
+
+    updateLanguage();
+
+  </script>
+</body>
+
+</html>
